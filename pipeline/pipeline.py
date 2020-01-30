@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import random
 from tqdm import tqdm
 import joblib
@@ -5,15 +7,24 @@ from pathlib import Path
 from wasabi import msg
 
 
-class Pipeline:
+@dataclass
+class BasicPipe:
+    load_dest : str
+    save_dest : str = None
+    old_extension : str = None
+    new_extension : str = None
+    shuffle : bool = False
+    limit : int = None
+
+class Pipeline(BasicPipe):
     def __init__(
         self,
-        load_dest,
-        save_dest=None,
-        old_extension=None,
-        new_extension=None,
-        shuffle=False,
-        limit=None,
+        #load_dest,
+        #save_dest=None,
+        #old_extension=None,
+        #new_extension=None,
+        #shuffle=False,
+        #limit=None,
     ):
 
         # If the input is a Path or string, read those files.

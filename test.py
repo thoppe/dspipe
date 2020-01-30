@@ -1,6 +1,26 @@
-from pipeline import Pipeline
-
+#from pipeline import Pipeline
 from pathlib import Path
+from dataclasses import dataclass
+
+
+@dataclass
+class BasicPipe:
+    source : str
+    dest : str = None
+    new_extension : str = None
+    old_extension : str = None
+    shuffle : bool = False
+    limit : int = None
+
+class Pipe(BasicPipe):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        pass
+
+P = Pipe('a')
+print(P)
+exit()
+
 
 a = u'README.md'
 b = Path(a)
