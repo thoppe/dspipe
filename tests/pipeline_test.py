@@ -3,10 +3,6 @@ import tempfile
 from pathlib import Path
 from pipeline import Pipe
 
-help(Path)
-exit()
-
-
 def add2(x):
     return x + 2
 
@@ -36,7 +32,7 @@ def test_check_input_filenames():
 
     with tempfile.TemporaryDirectory() as name:
         print(name)
-
+    
     result = Pipe("foo")(return_input, 1)
     expected = ["1.json", "2.json"]
     assert result == expected
