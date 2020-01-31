@@ -1,36 +1,12 @@
-#from pipeline import Pipeline
-from pathlib import Path
-from dataclasses import dataclass
+from pipeline import Pipe
 
+def compute(f0, f1):
+    print(f0, f1)
 
-@dataclass
-class BasicPipe:
-    source : str
-    dest : str = None
-    new_extension : str = None
-    old_extension : str = None
-    shuffle : bool = False
-    limit : int = None
+Pipe('foo', 'bar', '.json')(compute, 1)
+Pipe('foo', 'bar', '*.json')(compute, 1)
+Pipe('foo', 'bar', '*.json', '*.csv')(compute, 1)
 
-class Pipe(BasicPipe):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        pass
+print(len(Pipe('foo', 'bar', '.json')))
 
-P = Pipe('a')
-print(P)
-exit()
-
-
-a = u'README.md'
-b = Path(a)
-
-print(isinstance(a, str), isinstance(b, str))
-print(isinstance(a, Path), isinstance(b, Path))
-
-def compute(f0):
-    print(f0)
-
-a = [1,2,3]
-
-Pipeline(a)(compute)
+#Pipe([1,2,3], 'bar', '*.json', '*.csv')(compute, 1)

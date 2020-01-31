@@ -1,86 +1,95 @@
 from dataclasses import dataclass
 
 import random
-from tqdm import tqdm
-import joblib
+import itertools
 from pathlib import Path
+
+import joblib
+from tqdm import tqdm
 from wasabi import msg
 
 
 @dataclass
-class BasicPipe:
-    load_dest : str
-    save_dest : str = None
-    old_extension : str = None
-    new_extension : str = None
-    shuffle : bool = False
-    limit : int = None
+class Pipe:
+    """
+    Comments!
+    """
 
-class Pipeline(BasicPipe):
-    def __init__(
-        self,
-        #load_dest,
-        #save_dest=None,
-        #old_extension=None,
-        #new_extension=None,
-        #shuffle=False,
-        #limit=None,
-    ):
+    source: str
+    dest: str = None
+    input_suffix: str = ""
+    output_suffix: str = ""
+    shuffle: bool = False
+    limit: int = None
+    prefilter: bool = True
+    progress_bar: bool = True
 
-        # If the input is a Path or string, read those files.
-        # Otherwise, treat as an iterator.
-        self.is_input_from_files = isinstance(load_dest, (str, Path))
+    def __post_init__(self, *args, **kwargs):
+        """
+        Setups up the pipe for processing. Creates an ouput directory if needed,
+        shuffles data, and validiates input path or generic iterators .
+        """
 
-        # If save_dest is missing, we only need to iterate over the input
-        self.is_output_to_files = save_dest is not None
+        # If input is a path, build an iterable from a glob
+        if self.is_input_from_files:
+            self.input_suffix = Path(self.input_suffix)
 
-        if self.has_in:
-            self.load_dest = Path(load_dest)
-            self.F_IN = list(self.load_dest.glob("*" + old_extension))
+            # Strip any glob characters passed
+            self.input_suffix = str(self.input_suffix).lstrip("*")
 
-            # Value checks against input expression
-            if not old_extension:
-                err = (
-                    "Must set 'old_extension' when load_dest is a file location"
-                )
-                raise ValueError(err)
+            self.F_IN = Path(self.source).glob("*" + self.input_suffix)
 
+        # Otherwise assume source is an iterable
         else:
-            self.F_IN = load_dest
+            self.F_IN = self.source
 
-        if self.has_out:
-            self.save_dest = Path(save_dest)
-            # mkdir(save_dest)
+        # If output is a path, build a reference set of outputs
+        if self.is_output_to_files:
 
-            if not new_extension:
-                err = "Must set 'new_extension' if save_dest is specified"
-                raise ValueError(err)
-            self.F_OUT = set(self.save_dest.glob("*" + new_extension))
+            self.dest = Path(self.dest)
 
-            # Filter the input if we can
-            self.F_IN = [
-                f for f in self.F_IN if self.get_output_file(f) not in self
-            ]
+            # Create an output directory if needed
+            self.dest.mkdir(parents=True, exist_ok=True)
 
+            if not self.output_suffix:
+                self.output_suffix = self.input_suffix
+
+            if not self.output_suffix:
+                msg.fail(
+                    f"{self.__class__.__name__}: Must set either 'input_suffix' or 'output_suffix' if 'dest' is specified"
+                )
+                raise ValueError
+
+            # Strip any glob characters passed
+            self.output_suffix = str(self.output_suffix).lstrip("*")
+            self.F_OUT = set(self.dest.glob("*" + self.output_suffix))
+
+            # Conditionally filter the input
+            if self.prefilter:
+                self.F_IN = [
+                    f for f in self.F_IN if self.get_output_file(f) not in self
+                ]
         else:
             self.F_OUT = set()
 
-        # Make this a counter??
-        self.k = 0
-        self.limit = limit
-
         # Shuffle the input data if requested
-        if shuffle:
+        if self.shuffle:
             self.F_IN = sorted(list(self.F_IN))
             random.shuffle(self.F_IN)
 
     @property
-    def has_in(self):
-        return self.is_input_from_files
+    def is_input_from_files(self):
+        """
+        Return True if the input is a Path or string, read those files.
+        """
+        return isinstance(self.source, (str, Path))
 
     @property
-    def has_out(self):
-        return self.is_output_to_files
+    def is_output_to_files(self):
+        """
+        Return True if destination is a valid path.
+        """
+        return isinstance(self.dest, (str, Path))
 
     def __len__(self):
         """
@@ -98,10 +107,20 @@ class Pipeline(BasicPipe):
         return min(self.limit, n)
 
     def __iter__(self):
+        """
+        Iterates over the valid inputs. If self.dest is a path, will perform
+        an additional check to make sure it has not recently been created.
+        """
+
+        k = itertools.count()
 
         for f0 in self.F_IN:
 
-            if self.has_out:
+            # Short circuit if limit is reached
+            if self.limit and next(k) > self.limit:
+                break
+
+            if self.is_output_to_files:
                 f1 = self.get_output_file(f0)
 
                 if f1 is not None and f1.exists():
@@ -113,31 +132,38 @@ class Pipeline(BasicPipe):
             else:
                 yield (f0,)
 
-            self.k += 1
-            if self.limit and self.k >= self.limit:
-                break
-
-    def __contains__(self, x):
-        return x in self.F_OUT
+    def __contains__(self, f):
+        """
+        Check if the input is in the precompiled list.
+        """
+        return f in self.F_OUT
 
     def get_output_file(self, f0):
+        """
+        If 'dest' is a path, return the new output filename.
+        """
 
-        if not self.has_out:
+        if not self.is_output_to_files:
             return None
 
-        f1 = self.save_dest / Path(f0).name
-        return f1
+        f1 = self.dest / Path(str(f0)).stem
+        return f1.with_suffix(self.output_suffix)
 
     def __call__(self, func, n_jobs=-1):
-
-        # if not len(self):
-        #    return False
+        """
+        Call the input function. If n_jobs==-1 [default] run in parallel with
+        full cores.
+        """
+        if self.progress_bar:
+            ITR = tqdm(self)
+        else:
+            ITR = self
 
         if n_jobs == 1:
-            for args in tqdm(self):
+            for args in ITR:
                 func(*args)
             return True
 
         with joblib.Parallel(n_jobs) as MP:
             dfunc = joblib.delayed(func)
-            MP(dfunc(*args) for args in tqdm(self))
+            MP(dfunc(*args) for args in ITR)
