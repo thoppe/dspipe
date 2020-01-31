@@ -1,5 +1,5 @@
 test:
-	python test.py
+	python -m pytest --workers auto --durations=5 tests/
 
 lint:
-	black pipeline --line-length 80
+	black pipeline tests --line-length 80

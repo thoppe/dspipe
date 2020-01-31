@@ -1,5 +1,6 @@
 from pipeline import Pipe
 
+
 def compute(f0, f1):
     print(f0, f1)
 
