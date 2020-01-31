@@ -32,7 +32,14 @@ class Pipe:
 
         # If input is a path, build an iterable from a glob
         if self.is_input_from_files:
+
             self.input_suffix = Path(self.input_suffix)
+
+            # Fix the empty string case
+            if self.input_suffix == Path():
+                self.input_suffix = ""
+
+            print("INPUT", self.input_suffix)
 
             # Strip any glob characters passed
             self.input_suffix = str(self.input_suffix).lstrip("*")
@@ -61,6 +68,9 @@ class Pipe:
                 raise ValueError
 
             # Strip any glob characters passed
+            if self.output_suffix == ".":
+                self.output_suffix = ""
+
             self.output_suffix = str(self.output_suffix).lstrip("*")
             self.F_OUT = set(self.dest.glob("*" + self.output_suffix))
 
@@ -160,10 +170,8 @@ class Pipe:
             ITR = self
 
         if n_jobs == 1:
-            for args in ITR:
-                func(*args)
-            return True
+            return [func(*args) for args in ITR]
 
         with joblib.Parallel(n_jobs) as MP:
             dfunc = joblib.delayed(func)
-            MP(dfunc(*args) for args in ITR)
+            return MP(dfunc(*args) for args in ITR)
