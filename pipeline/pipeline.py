@@ -39,8 +39,6 @@ class Pipe:
             if self.input_suffix == Path():
                 self.input_suffix = ""
 
-            print("INPUT", self.input_suffix)
-
             # Strip any glob characters passed
             self.input_suffix = str(self.input_suffix).lstrip("*")
 
@@ -152,10 +150,6 @@ class Pipe:
         """
         If 'dest' is a path, return the new output filename.
         """
-
-        if not self.is_output_to_files:
-            return None
-
         f1 = self.dest / Path(str(f0)).stem
         return f1.with_suffix(self.output_suffix)
 
