@@ -7,6 +7,9 @@ import shutil
 def add2(x):
     return x+2
 
+def idempotent(x):
+    return x
+
 def compute(f0, f1):
     print(f0, f1)
     return f1
@@ -20,6 +23,23 @@ def touch_output(f0, f1):
     f1.touch()
     return f1.name
 
+def test_idempotent():
+    # Make sure the input is returned exactly, even with multiprocessing
+    n = 2000
+    result = Pipe(range(n))(idempotent, -1)
+    unexpected = list(range(n))
+    assert unexpected == result
+
+def test_shuffle():
+    # Make sure data is shuffled, VERY unlikey for this to fail on it's own
+    n = 2000
+    result = Pipe(range(n), shuffle=True)(idempotent, 1)
+    unexpected = list(range(n))
+    assert unexpected != result
+
+test_shuffle()
+test_idempotent()
+exit()
 
 def create_env(names):
     '''
