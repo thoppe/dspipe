@@ -7,60 +7,9 @@ import shutil
 def add2(x):
     return x+2
 
-def idempotent(x):
-    return x
-
-def compute(f0, f1):
-    print(f0, f1)
-    return f1
-
-def return_input(f0):
-    print(f0)
-    return f0
-
-def touch_output(f0, f1):
-    # Helper function, returns the output
-    f1.touch()
-    return f1.name
+print(Pipe(range(3))(add2))
 
 
-def create_env(names):
-    """
-    Returns a temporary directory with empty files created using names.
-    """
-    source = Path(tempfile.mkdtemp())
-
-    for name in names:
-        (source / name).touch()
-
-    return source
-
-        
-
-def test_create_intermediate_file():
-    """
-    Makes sure output files are created.
-    """
-
-    input_file_names = ["apple.json", "grape.json", "banana.json"]
-    source = create_env(input_file_names)
-    dest = create_env(input_file_names[:1])
-
-    P = Pipe(source, dest, '.json')
-
-    # Before we call the pipe, create the second file
-    (dest / input_file_names[1]).touch()
-
-    created_files = P(touch_output, 1)
-    expected = input_file_names[2:]
-
-    assert created_files == expected
-
-    shutil.rmtree(source)
-    shutil.rmtree(dest)
-
-
-test_create_intermediate_file()
 exit()
 
 def create_env(names):

@@ -12,7 +12,8 @@ from wasabi import msg
 @dataclass
 class Pipe:
     """
-    Comments!
+    Data science pipeline. Takes input from 'source' as an iterator or path.
+    Input and generated output filename is fed into the called function.
     """
 
     source: str
