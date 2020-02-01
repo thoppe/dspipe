@@ -40,12 +40,6 @@ def create_env(names):
     return source
 
 
-def touch_output(f0, f1):
-    # Helper function, returns the output
-    f1.touch()
-    return f1.name
-
-
 ############################################################################
 
 
