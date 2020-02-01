@@ -1,7 +1,7 @@
 from pipeline import Pipe
 from pathlib import Path
 import tempfile
-
+import shutil
 
 
 def add2(x):
@@ -11,31 +11,49 @@ def compute(f0, f1):
     print(f0, f1)
     return f1
 
-def return_input(f0, f1):
-    print(f0, f1)
+def return_input(f0):
+    print(f0)
     return f0
 
-def test_check_input_filenames():
-
-    expected = ['apple.json', 'grape.json']
-
-    with tempfile.TemporaryDirectory() as source:
-        source = Path(source)
-
-        for name in expected:
-            print(source/name)
-            (source / name).touch()
-            
-        result = Pipe(source)(return_input, 1)
-        
-        print(result)
-        
-    #expected = ["1.json", "2.json"]
-    #print(result)
-    #assert result == expected
+def touch_output(f0, f1):
+    # Helper function, returns the output
+    f1.touch()
+    return f1.name
 
 
-test_check_input_filenames()
+def create_env(names):
+    '''
+    Returns a temporary directory with empty files created using names.
+    '''
+    source = tempfile.mkdtemp()
+    
+    for name in names:
+        (Path(source) / name).touch()
+
+    return Path(source)
+
+def test_check_output_files():
+    '''
+    Makes sure output files are created.
+    '''
+
+    input_file_names = ['apple.json', 'grape.json']
+    source = create_env(input_file_names)
+    dest = create_env([])
+
+    P = Pipe(source, dest, output_suffix='.csv')(touch_output)
+
+    expected = ['apple.csv', 'grape.csv']
+    result = sorted([x.name for x in dest.glob('*.csv')])
+
+    assert result == expected
+
+    shutil.rmtree(source)
+    shutil.rmtree(dest)
+
+
+
+test_check_output_files()
 exit()
     
 x = Pipe('foo', 'bar', '.json')(compute, 2)

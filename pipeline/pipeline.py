@@ -27,7 +27,7 @@ class Pipe:
     def __post_init__(self, *args, **kwargs):
         """
         Setups up the pipe for processing. Creates an ouput directory if needed,
-        shuffles data, and validiates input path or generic iterators .
+        shuffles data, and validiates input path or generic iterators.
         """
 
         # If input is a path, build an iterable from a glob
