@@ -22,7 +22,7 @@ class Pipe:
     shuffle: bool = False
     limit: int = None
     prefilter: bool = True
-    progress_bar: bool = True
+    progressbar: bool = True
 
     def __post_init__(self, *args, **kwargs):
         """
@@ -64,10 +64,6 @@ class Pipe:
                     f"{self.__class__.__name__}: Must set either 'input_suffix' or 'output_suffix' if 'dest' is specified"
                 )
                 raise ValueError
-
-            # Strip any glob characters passed
-            if self.output_suffix == ".":
-                self.output_suffix = ""
 
             self.output_suffix = str(self.output_suffix).lstrip("*")
             self.F_OUT = set(self.dest.glob("*" + self.output_suffix))
@@ -158,7 +154,7 @@ class Pipe:
         Call the input function. If n_jobs==-1 [default] run in parallel with
         full cores.
         """
-        if self.progress_bar:
+        if self.progressbar:
             ITR = tqdm(self)
         else:
             ITR = self

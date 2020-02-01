@@ -78,6 +78,13 @@ def test_limit():
     assert expected != result
 
 
+def test_progessbar_toggle():
+    # Make sure compute still works without a progress bar
+    n = 127
+    result = Pipe(range(n), progressbar=False)(idempotent, 1)
+    assert result == list(range(n))
+
+
 def test_compute_math():
     n = 23
     result = Pipe(range(n))(add2)
