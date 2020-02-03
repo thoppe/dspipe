@@ -4,7 +4,7 @@ test:
 	python -m pytest tests/
 
 coverage:
-	coverage run --source=$(package_name) -m pytest tests/
+	coverage run --source=$(package_name) --omit $(package_name)/_version.py -m pytest tests/
 	coverage report -m
 	coverage html
 	xdg-open htmlcov/index.html
