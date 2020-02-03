@@ -4,7 +4,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from pipeline import Pipe
+from dspipe import Pipe
 
 
 def idempotent(x):

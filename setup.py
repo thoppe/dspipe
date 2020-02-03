@@ -1,7 +1,7 @@
 import setuptools
 import os
 
-package_name = 'pipeline'
+package_name = 'dspipe'
 __local__ = os.path.abspath(os.path.dirname(__file__))
 
 # Load the package version
@@ -22,6 +22,7 @@ setuptools.setup(
     include_package_data=False,
     
     install_requires=[
+        "joblib", # Parallel code
         "wasabi", # Colored logging
         "tqdm", # Status bar
     ],
@@ -30,7 +31,7 @@ setuptools.setup(
     version=__version__,
     
     # The project's main homepage.
-    url="https://github.com/NIHOPA/NLPre",
+    url="https://github.com/thoppe/{package_name}",
     
     # Author details
     author="Travis Hoppe",

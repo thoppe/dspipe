@@ -1,4 +1,4 @@
-from pipeline import Pipe
+from dspipe import Pipe
 from pathlib import Path
 import tempfile
 import shutil
