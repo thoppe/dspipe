@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import random
 import itertools
+import hashlib
 from pathlib import Path
 
 import joblib
@@ -24,6 +25,7 @@ class Pipe:
     limit: int = None
     prefilter: bool = True
     progressbar: bool = True
+    autoname: bool = False
 
     def __post_init__(self, *args, **kwargs):
         """
@@ -59,12 +61,6 @@ class Pipe:
 
             if not self.output_suffix:
                 self.output_suffix = self.input_suffix
-
-            if not self.output_suffix:
-                msg.fail(
-                    f"{self.__class__.__name__}: Must set either 'input_suffix' or 'output_suffix' if 'dest' is specified"
-                )
-                raise ValueError
 
             self.output_suffix = str(self.output_suffix).lstrip("*")
             self.F_OUT = set(self.dest.glob("*" + self.output_suffix))
@@ -146,7 +142,14 @@ class Pipe:
     def get_output_file(self, f0):
         """
         If 'dest' is a path, return the new output filename.
+        If self.autoname is set, return an automatic name from the input.
         """
+
+        f0 = str(f0)
+
+        if self.autoname:
+            f0 = hashlib.md5(f0.encode("utf-8")).hexdigest()
+
         f1 = self.dest / Path(str(f0)).stem
         return f1.with_suffix(self.output_suffix)
 

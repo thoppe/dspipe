@@ -4,10 +4,21 @@ import tempfile
 import shutil
 
 
-def add2(x):
-    return x+2
+#def add2(x):
+#   return x+2
+#print(Pipe(range(3),'foo', autoname=True)(add2))
 
-print(Pipe(range(3))(add2))
+def idempoent(x,y):
+    print(x,y)
+    return y
+
+input_filenames = [1, 'apple']
+result = Pipe(input_filenames, 'foo', autoname=True)(idempoent)
+result = [f.name for f in result]
+print(result)
+exit()
+#print(Pipe(['dog','cat'],'foo', autoname=True)(add2))
+print(Pipe([1,'cat'],'foo', output_suffix='.pdf',autoname=False)(idempoent))
 
 
 exit()

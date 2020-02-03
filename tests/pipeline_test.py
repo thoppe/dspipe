@@ -120,8 +120,8 @@ def test_check_output_files():
     Makes sure output files are created.
     """
 
-    input_file_names = ["apple.json", "grape.json"]
-    source = create_env(input_file_names)
+    input_filenames = ["apple.json", "grape.json"]
+    source = create_env(input_filenames)
     dest = create_env([])
 
     P = Pipe(source, dest, output_suffix=".csv")(touch_output)
@@ -140,17 +140,17 @@ def test_create_intermediate_file():
     Makes sure output files are created.
     """
 
-    input_file_names = ["apple.json", "grape.json", "banana.json"]
-    source = create_env(input_file_names)
-    dest = create_env(input_file_names[:1])
+    input_filenames = ["apple.json", "grape.json", "banana.json"]
+    source = create_env(input_filenames)
+    dest = create_env(input_filenames[:1])
 
     P = Pipe(source, dest, ".json")
 
     # Before we call the pipe, create the second file
-    (dest / input_file_names[1]).touch()
+    (dest / input_filenames[1]).touch()
 
     created_files = P(touch_output, 1)
-    expected = input_file_names[2:]
+    expected = input_filenames[2:]
 
     assert created_files == expected
 
@@ -158,9 +158,20 @@ def test_create_intermediate_file():
     shutil.rmtree(dest)
 
 
-def test_output_without_extension():
-    source = create_env([])
+def test_autorename():
+    """
+    Tests the creation of hased filenames from input.
+    """
+    input_filenames = [1, "apple"]
     dest = create_env([])
 
-    with pytest.raises(ValueError):
-        Pipe(source, dest)
+    result = Pipe(input_filenames, dest, output_suffix=".pdf", autoname=True)(
+        touch_output
+    )
+
+    expected = [
+        "c4ca4238a0b923820dcc509a6f75849b.pdf",
+        "1f3870be274f6c49b3e31a0c6728957f.pdf",
+    ]
+
+    assert result == expected
