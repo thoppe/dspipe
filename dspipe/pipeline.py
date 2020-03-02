@@ -47,6 +47,9 @@ class Pipe:
 
             self.F_IN = Path(self.source).glob("*" + self.input_suffix)
 
+            # Sort the input for fixed ordering
+            self.F_IN = sorted(self.F_IN)
+
         # Otherwise assume source is an iterable
         else:
             self.F_IN = self.source
