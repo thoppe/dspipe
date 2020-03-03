@@ -121,7 +121,7 @@ class Pipe:
         for f0 in self.F_IN:
 
             # Short circuit if limit is reached
-            if self.limit and next(k) > self.limit:
+            if self.limit and next(k) >= self.limit:
                 break
 
             if self.is_output_to_files:
