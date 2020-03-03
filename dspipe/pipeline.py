@@ -81,6 +81,7 @@ class Pipe:
             self.F_IN = sorted(list(self.F_IN))
             random.shuffle(self.F_IN)
 
+
     @property
     def is_input_from_files(self):
         """
@@ -156,19 +157,20 @@ class Pipe:
         f1 = self.dest / Path(str(f0)).stem
         return f1.with_suffix(self.output_suffix)
 
-    def __call__(self, func, n_jobs=-1):
+    def __call__(self, func, n_jobs=-1, **kwargs):
         """
         Call the input function. If n_jobs==-1 [default] run in parallel with
         full cores.
         """
+        
         if self.progressbar:
             ITR = tqdm(self)
         else:
             ITR = self
 
         if n_jobs == 1:
-            return [func(*args) for args in ITR]
+            return [func(*args, **kwargs) for args in ITR]
 
         with joblib.Parallel(n_jobs) as MP:
             dfunc = joblib.delayed(func)
-            return MP(dfunc(*args) for args in ITR)
+            return MP(dfunc(*args, **kwargs) for args in ITR)
