@@ -4,6 +4,7 @@ import random
 import itertools
 import hashlib
 from pathlib import Path
+from glob import iglob
 
 import joblib
 from tqdm import tqdm
@@ -45,10 +46,17 @@ class Pipe:
             # Strip any glob characters passed
             self.input_suffix = str(self.input_suffix).lstrip("*")
 
-            self.F_IN = Path(self.source).glob("*" + self.input_suffix)
+            if self.prefilter:
+                self.F_IN = Path(self.source).glob("*" + self.input_suffix)
 
-            # Sort the input for fixed ordering
-            self.F_IN = sorted(self.F_IN)
+                # Sort the input for fixed ordering
+                self.F_IN = sorted(self.F_IN)
+
+            else:
+                # If we don't want to prefilter use an iterator glob (iglob)
+                # pathlib currently doesn't support iglob
+                pattern = Path(self.source) / ("*" + self.input_suffix)
+                self.F_IN = iglob(str(pattern))
 
         # Otherwise assume source is an iterable
         else:
@@ -80,7 +88,6 @@ class Pipe:
         if self.shuffle:
             self.F_IN = sorted(list(self.F_IN))
             random.shuffle(self.F_IN)
-
 
     @property
     def is_input_from_files(self):
@@ -162,7 +169,7 @@ class Pipe:
         Call the input function. If n_jobs==-1 [default] run in parallel with
         full cores.
         """
-        
+
         if self.progressbar:
             ITR = tqdm(self)
         else:

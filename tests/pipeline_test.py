@@ -158,6 +158,26 @@ def test_create_intermediate_file():
     shutil.rmtree(dest)
 
 
+def test_prefilter_false():
+    """
+    Tests if iglob actually works when prefilter=False
+    """
+
+    input_filenames = ["apple.json", "grape.json"]
+    source = create_env(input_filenames)
+    dest = create_env([])
+
+    P = Pipe(source, dest, output_suffix=".csv", prefilter=False)(touch_output)
+
+    expected = ["apple.csv", "grape.csv"]
+    result = sorted([x.name for x in dest.glob("*.csv")])
+
+    assert result == expected
+
+    shutil.rmtree(source)
+    shutil.rmtree(dest)
+
+
 def test_autorename():
     """
     Tests the creation of hased filenames from input.
