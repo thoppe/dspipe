@@ -135,7 +135,7 @@ class Pipe:
             if self.is_output_to_files:
                 f1 = self.get_output_file(f0)
 
-                if f1 is not None and f1.exists():
+                if f1 is not None and f1.exists() and self.prefilter:
                     msg.warn(f"Did not expect {f1} to exist, skipping")
                     continue
 
