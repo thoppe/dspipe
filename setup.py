@@ -31,7 +31,7 @@ setuptools.setup(
     version=__version__,
     
     # The project's main homepage.
-    url="https://github.com/thoppe/{package_name}",
+    url=f"https://github.com/thoppe/{package_name}",
     
     # Author details
     author="Travis Hoppe",
