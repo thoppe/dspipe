@@ -1,4 +1,7 @@
 ![](docs/logo.jpg)
+[![PyVersion](https://img.shields.io/pypi/pyversions/dspipe.svg)](https://img.shields.io/pypi/pyversions/dspipe.svg)
+[![PyPI](https://img.shields.io/pypi/v/dspipe.svg)](https://pypi.python.org/pypi/dspipe)
+
 
 _easy to use data science pipes_
 
