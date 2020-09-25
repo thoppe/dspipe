@@ -1,15 +1,17 @@
 ![](docs/logo.jpg)
-[![PyVersion](https://img.shields.io/pypi/pyversions/dspipe.svg)](https://img.shields.io/pypi/pyversions/dspipe.svg)
-[![PyPI](https://img.shields.io/pypi/v/dspipe.svg)](https://pypi.python.org/pypi/dspipe)
 
 
 _easy to use data science pipes_
+
+[![PyVersion](https://img.shields.io/pypi/pyversions/dspipe.svg)](https://img.shields.io/pypi/pyversions/dspipe.svg)
+[![PyPI](https://img.shields.io/pypi/v/dspipe.svg)](https://pypi.python.org/pypi/dspipe)
+
 
     pip install dspipe
 
 Shuffling your data from one directory into another directory is easier than before!
 
-On it's own, a Pipe can call a function in parallel using joblib.
+On it's own, a Pipe calls a function in parallel using [joblib](https://joblib.readthedocs.io/en/latest/). By default it uses all possible cores to compute:
 
 ``` python
 from dspipe import Pipe
@@ -37,7 +39,7 @@ P = Pipe("data/xml", "data/parsed_csv", input_suffix='.xml', output_suffix='.csv
 P(compute, -1)
 ```
 
-This will run the pipe for every XML file in `data/xml`, create the directory `data/parsed_csv`, and give the compute function a new filename to save it to `f1` with the `.xml` replaced with `.csv`. Running the pipe with -1 (which indicate the number of cores) runs it fully in parallel. Use 1 for single threaded execution and n for a specific number of threads.
+This will run the pipe for every XML file in `data/xml`, create the directory `data/parsed_csv`, and give the compute function a new filename to save it to `f1` with the `.xml` replaced with `.csv`. Running the pipe with 1 as the second argument wil run single-threaded execution.
 
 Other options and defaults for Pipe 
 
