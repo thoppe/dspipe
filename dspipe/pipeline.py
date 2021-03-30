@@ -306,7 +306,6 @@ class ESPipe:
                 batch.append(packaged_result)
 
                 if len(batch) >= self.batch_size:
-                    print(batch)
                     res = elasticsearch.helpers.bulk(self.es, batch)
                     assert len(batch) == res[0]
                     batch = []
