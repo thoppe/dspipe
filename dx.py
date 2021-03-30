@@ -1,7 +1,27 @@
-from dspipe import Pipe
+from dspipe import Pipe, ESPipe
 from pathlib import Path
 import tempfile
 import shutil
+from tqdm import tqdm
+import random
+import time
+
+def compute(doc):
+    if doc['data_source'] != 'exporter':
+        return None
+
+    activity_code = doc['program'][:3]
+    
+    
+    print(activity_code)
+    return None
+
+P = ESPipe('hhsjobs', 'derived_career_stage',
+           limit=1000000, force=False)
+#P.clear_field()
+P(compute, 1)
+
+exit()
 
 
 #def add2(x):

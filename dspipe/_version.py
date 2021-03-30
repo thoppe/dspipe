@@ -1,8 +1,9 @@
 # One canonical source for the version number,
 # Versions should comply with PEP440.
 
-__version__ = "0.2.3"
+__version__ = "0.3.0"
 
+# 0.3.0 Add elasticsearch pipeline
 # 0.2.3 Prefilter==False uses iglob for speed
 # 0.2.2 Add kwargs in call
 # 0.2.1 Fix bug in limit
