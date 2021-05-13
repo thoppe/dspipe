@@ -25,7 +25,7 @@ setuptools.setup(
         "joblib", # Parallel code
         "wasabi", # Colored logging
         "tqdm", # Status bar
-        "elasticsearch", # Integration with elasticsearch
+        # "elasticsearch", # Integration with elasticsearch (optional)
     ],
     description=f"{package_name}: Easy to use data science pipes",
     long_description=long_description,

@@ -1,1 +1,1 @@
-from .pipeline import Pipe, ESPipe
+from .pipeline import Pipe

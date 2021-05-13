@@ -1,8 +1,9 @@
 # One canonical source for the version number,
 # Versions should comply with PEP440.
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 
+# 0.3.3 Make elasticsearch optional
 # 0.3.2 Add missing requirement
 # 0.3.1 Fix extra print statement
 # 0.3.0 Add elasticsearch pipeline
