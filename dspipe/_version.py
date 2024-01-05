@@ -3,6 +3,7 @@
 
 __version__ = "0.3.3"
 
+# 0.4.0 Added option for a tqdm total
 # 0.3.3 Make elasticsearch optional
 # 0.3.2 Add missing requirement
 # 0.3.1 Fix extra print statement

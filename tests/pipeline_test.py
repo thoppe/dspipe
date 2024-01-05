@@ -79,6 +79,13 @@ def test_progessbar_toggle():
     assert result == list(range(n))
 
 
+def test_forced_total():
+    # Test forcing a total into the progress bar
+    n = 127
+    result = Pipe(range(n), total=n)(idempotent, 1)
+    assert result == list(range(n))
+
+
 def test_compute_math():
     n = 23
     result = Pipe(range(n))(add2)

@@ -41,11 +41,24 @@ P(compute, -1)
 
 This will run the pipe for every XML file in `data/xml`, create the directory `data/parsed_csv`, and give the compute function a new filename to save it to `f1` with the `.xml` replaced with `.csv`. Running the pipe with 1 as the second argument wil run single-threaded execution.
 
-Other options and defaults for Pipe 
+Init options for `Pipe`
 
-+ `shuffle = True` shuffle the data in the input before compute
-+ `progressbar = True` turns on/off the progress bar
-+ `prefilter = True` runs through the input filenames ahead of time
-+ `autorename = True` turns on/off the renaming
+``` python
+    source: str
+    dest: str = None
+    input_suffix: str = ""
+    output_suffix: str = ""
+    shuffle: bool = False
+    limit: int = None
+    prefilter: bool = True
+    progressbar: bool = True
+    autoname: bool = False
+    total: int = None
+```
 
+Call options for `Pipe`
 
+``` python
+def __call__(self, func, n_jobs=-1, **kwargs):
+    # **kwargs are passed to the function
+```

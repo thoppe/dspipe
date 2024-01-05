@@ -29,6 +29,7 @@ class Pipe:
     prefilter: bool = True
     progressbar: bool = True
     autoname: bool = False
+    total: int = None
 
     def __post_init__(self, *args, **kwargs):
         """
@@ -45,10 +46,8 @@ class Pipe:
             random.shuffle(self.F_IN)
 
     def preprocess_input(self):
-
         # If input is a path, build an iterable from a glob
         if self.is_input_from_files:
-
             self.input_suffix = Path(self.input_suffix)
 
             # Fix the empty string case
@@ -75,10 +74,8 @@ class Pipe:
             self.F_IN = self.source
 
     def preprocess_output(self):
-
         # If output is a path, build a reference set of outputs
         if self.is_output_to_files:
-
             self.dest = Path(self.dest)
 
             # Create an output directory if needed
@@ -136,7 +133,6 @@ class Pipe:
         k = itertools.count()
 
         for f0 in self.F_IN:
-
             # Short circuit if limit is reached
             if self.limit and next(k) >= self.limit:
                 break
@@ -180,7 +176,10 @@ class Pipe:
         """
 
         if self.progressbar:
-            ITR = tqdm(self)
+            if self.total:
+                ITR = tqdm(self, total=self.total)
+            else:
+                ITR = tqdm(self)
         else:
             ITR = self
 

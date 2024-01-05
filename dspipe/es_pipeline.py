@@ -5,7 +5,7 @@ import elasticsearch.helpers
 @dataclass
 class ESPipe:
     """
-    Data science pipeline to process and return data to an ElasticSearch instance. 
+    Data science pipeline to process and return data to an ElasticSearch instance.
     """
 
     document_index: str
@@ -25,14 +25,19 @@ class ESPipe:
         )
 
     def _get_query(self):
-
         # If we are not forced, skip where a value is already present
         if self.force:
             query = {
-                "query": {"match_all": {},},
+                "query": {
+                    "match_all": {},
+                },
             }
         else:
-            query = {"query": {"bool": {"must_not": []},}}
+            query = {
+                "query": {
+                    "bool": {"must_not": []},
+                }
+            }
             query["query"]["bool"]["must_not"].append(
                 {"exists": {"field": self.field}}
             )
@@ -46,7 +51,9 @@ class ESPipe:
 
         query = self._get_query()
         ITR = elasticsearch.helpers.scan(
-            self.es, query=query, index=self.document_index,
+            self.es,
+            query=query,
+            index=self.document_index,
         )
 
         if self.limit:
@@ -80,7 +87,17 @@ class ESPipe:
                 "inline": f"""ctx._source.remove("{self.field}")""",
                 "lang": "painless",
             },
-            "query": {"bool": {"must": [{"exists": {"field": self.field,}}]}},
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "exists": {
+                                "field": self.field,
+                            }
+                        }
+                    ]
+                }
+            },
         }
 
         self.es.update_by_query(
@@ -101,7 +118,6 @@ class ESPipe:
             ITR = self
 
         if n_jobs == 1:
-
             batch = []
             for row in ITR:
                 result = func(row, **kwargs)
