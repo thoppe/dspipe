@@ -93,6 +93,32 @@ def test_compute_math():
     assert result == expected
 
 
+def test_compute_math_default_prefer():
+    n = 23
+    result = Pipe(range(n))(add2, n_jobs=2)
+    expected = list(range(2, n + 2))
+    assert result == expected
+
+
+def test_compute_math_threads_prefer():
+    n = 23
+    result = Pipe(range(n))(add2, n_jobs=2, prefer="threads")
+    expected = list(range(2, n + 2))
+    assert result == expected
+
+
+def test_invalid_prefer_raises():
+    with pytest.raises(ValueError, match="prefer must be one of"):
+        Pipe(range(3))(idempotent, n_jobs=2, prefer="bad-value")
+
+
+def test_serial_ignores_prefer():
+    n = 23
+    result = Pipe(range(n))(add2, n_jobs=1, prefer="threads")
+    expected = list(range(2, n + 2))
+    assert result == expected
+
+
 def test_check_input_filenames():
     """
     Creates two input files and tests if they were feed as input.

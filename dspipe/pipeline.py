@@ -169,11 +169,16 @@ class Pipe:
         f1 = self.dest / Path(str(f0)).stem
         return f1.with_suffix(self.output_suffix)
 
-    def __call__(self, func, n_jobs=-1, **kwargs):
+    def __call__(self, func, n_jobs=-1, prefer=None, **kwargs):
         """
         Call the input function. If n_jobs==-1 [default] run in parallel with
         full cores.
         """
+        valid_prefer = {None, "threads", "processes"}
+        if prefer not in valid_prefer:
+            raise ValueError(
+                "prefer must be one of: None, 'threads', 'processes'"
+            )
 
         if self.progressbar:
             if self.total:
@@ -186,6 +191,6 @@ class Pipe:
         if n_jobs == 1:
             return [func(*args, **kwargs) for args in ITR]
 
-        with joblib.Parallel(n_jobs) as MP:
+        with joblib.Parallel(n_jobs, prefer=prefer) as MP:
             dfunc = joblib.delayed(func)
             return MP(dfunc(*args, **kwargs) for args in ITR)

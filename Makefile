@@ -18,9 +18,9 @@ clean:
 dist_test:
 	rm -rvf dist
 	python setup.py sdist
-	twine upload -r test dist/*
+	twine upload -r testpypi dist/* --verbose
 
 dist_production:
 	rm -rvf dist
 	python setup.py sdist
-	twine upload dist/*
+	twine upload -r pypi dist/* --verbose

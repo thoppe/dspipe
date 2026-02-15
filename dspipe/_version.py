@@ -1,8 +1,9 @@
 # One canonical source for the version number,
 # Versions should comply with PEP440.
 
-__version__ = "0.3.3"
+__version__ = "0.4.2"
 
+# 0.4.2 Add prefer option for thread/process backend hints in Pipe
 # 0.4.0 Added option for a tqdm total
 # 0.3.3 Make elasticsearch optional
 # 0.3.2 Add missing requirement

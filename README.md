@@ -59,6 +59,16 @@ Init options for `Pipe`
 Call options for `Pipe`
 
 ``` python
-def __call__(self, func, n_jobs=-1, **kwargs):
+def __call__(self, func, n_jobs=-1, prefer=None, **kwargs):
     # **kwargs are passed to the function
 ```
+
+Use `prefer="threads"` when you want parallel execution without process
+pickling:
+
+``` python
+result = Pipe(range(3))(add2, n_jobs=-1, prefer="threads")
+```
+
+For pure Python CPU-bound code, threads may not improve throughput due to the
+GIL.
